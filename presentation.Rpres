@@ -17,6 +17,10 @@ if(!require(MASS)) install.packages("MASS")
 if(!require(gapminder)) install.packages("gapminder")
 if(!require(ggExtra)) install.packages("ggExtra")
 if(!require(ggpubr))library(ggpubr)
+if(!require(readxl))library(readxl)
+if(!require(ggplot2))library(ggplot2)
+if(!require(ggsci))library(ggsci)
+
 
 opts_chunk$set(fig.width=9, fig.height=6, fig.path='Figs/', warning=FALSE, message=FALSE, fig.pos = "H", comment = "")
 
@@ -283,5 +287,110 @@ ggerrorplot(ToothGrowth, x = "dose", y = "len",
             error.plot = "errorbar",            # Change error plot type
             add = "mean"                        # Add mean points
             )
+```
+
+Ranking plots
+========================================================
+
+- (Ordered) Bar Chart
+- Lollipop Chart
+- Dot Plot
+- Slope Chart
+- Dumbbell Plot
+
+```{r echo= FALSE}
+data1 <- read_excel("Data/Data for graphs.xlsx", 
+                    sheet = "graph1")
+```
+
+Bar Chart code
+========================================================
+
+```{r}
+gg= ggbarplot(data = data1, #import  Data
+          x="App",          # The X-value
+          y="Proportion",   # The percentages
+          fill="firebrick1",# The color of the bars
+          xlab = "",        # label of X-axis
+          title = "Bar chart of dating app percentage", # better title
+          ylim = c(0,0.80), # Increase the ylimits
+          ylab = "Share of respondents",
+          order = c("Happn","Lexa","Paiq","Tinder","Badoo"))+   
+  theme(plot.title = element_text(hjust = 0.5))+ 
+  scale_y_continuous(breaks=seq(0,0.7,0.1),
+                     labels=scales::percent)+
+  geom_text(aes(label=paste(Proportion*100,"%",sep = "")),size=3,vjust=-1)
+
+
+```
+
+Bar Chart
+========================================================
+
+```{r echo=FALSE}
+plot(gg)
+```
+
+
+Ordered bar-chart code
+========================================================
+
+```{r echo=FALSE}
+data2 <- read_excel("Data/Data for graphs.xlsx", 
+                    sheet = "Sheet2")
+
+```
+
+```{r}
+gg= data2%>%
+  arrange(desc(-freq))%>%
+  ggbarplot( #import  Data
+          x="website",          # The X-value
+          y="freq",   # The percentages
+          fill="nature",# The color of the bars
+          xlab = "",        # label of X-axis
+          title = "Online dating services in Netherlands (June 2014)", # better title
+          ylim = c(0,300000), # Increase the ylimits
+          ylab = "Share of respondents")+ rotate() +
+  scale_y_continuous(breaks=seq(0,300000,50000),expand=c(0,0))+
+    theme(legend.position =c(0.85,0.25),
+          legend.title=element_text(size=8),
+          legend.text=element_text(size=8),
+          plot.title = element_text(hjust = 0.5))
+
+
+```
+
+Ordered bar-chart 
+========================================================
+```{r}
+plot(gg)
+```
+
+Lollipop Chart code
+========================================================
+
+```{r}
+
+
+# Plot
+gg= ggplot(data2,aes(x=reorder(website,freq), 
+                     y=freq, color=nature, 
+                     fill = nature)) + 
+  geom_point(size=5,shape = 1) + 
+  geom_segment(aes(x=website, xend=website, y=0, yend=freq)) + 
+  labs(title="Lollipop Chart", 
+       subtitle="Online dating services in Netherlands (June 2014)", 
+       caption="source: Alexa.com") + scale_color_lancet()+
+  theme(axis.text.x = element_text(angle=65, vjust=0.6))+
+  geom_text(aes(label= freq),size=2,hjust=-0.35) + rotate()
+
+
+```
+
+
+
+```{r}
+plot(gg)
 ```
 
