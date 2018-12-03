@@ -1,10 +1,10 @@
-library(ggpubr)
-install.packages("tidyverse")
+if(!require(ggpubr))library(ggpubr)
+if(!require(tidyverse))install.packages("tidyverse")
 library(MASS)
 
 
 Sigma= matrix(c(10,0.5,0.5,15), 2)
-Sigma2= matrix(c(7.5,0.5,0.5,7.5), 2)
+Sigma2= matrix(c(7.5,0.75,0.75,7.5), 2)
 
 
 df =  data.frame(mvrnorm(1000,c(180,80) , Sigma = Sigma) , Gender = rep("Male"))
