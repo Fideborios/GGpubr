@@ -144,9 +144,9 @@ graph2+scale_fill_manual(values=c("red","blue","green"))
 
 ########GRAPH 3###############
 library(readxl)
-data3 <- read_excel("C:/Users/Jordache/Google Drive/Radboud University/Copy of Data for graphs.xlsx", 
-                    sheet = "Sheet4")
-View(data3)
+data3 <- read_excel("Data/Data for graphs.xlsx", 
+                    sheet = "graph4")
+head(data3)
 
 ## Basic plot
 graph3=ggplot(data=data3, aes(x=App,y=Proportion,ymin=LCI, ymax=UCI))+
@@ -165,9 +165,8 @@ graph3
 ##########GRAPH 4#############
 
 library(readxl)
-data4 <- read_excel("C:/Users/Jordache/Google Drive/Radboud University/Copy of Data for graphs.xlsx", 
-                    sheet = "Sheet3")
-View(data4)
+data4 <- read_excel("Data/Data for graphs.xlsx", sheet = "Sheet3")
+head(data4)
 
 ## Simple plot
 graph4 = ggplot(data=data4,aes(x=year,y=proportion,color=how))+
@@ -180,7 +179,7 @@ graph4a = ggplot(data=data4[data4$orientation=="Heterosexual Couples",],aes(x=ye
 graph4a
 
 graph4b = ggplot(data=data4[data4$orientation=="Homosexual Couples",],aes(x=year,y=proportion,color=how))+
-  geom_point()+geom_line()
+  geom_point()+geom_line()+facet_grid(~ orientation)
 graph4b
 
 
@@ -204,8 +203,8 @@ graph4
 #1. Replicate the following graph. The data can be found in CLI_data_long.sav
 
 library(haven)
-CLI_data_long <- read_sav("Datasets/CLI_data_long.sav")
-View(CLI_data_long)
+CLI_data_long <- read_sav("Data/CLI_data_long.sav")
+head(CLI_data_long)
 
 ggplot(data=CLI_data_long,aes(x=Day,y=RelativePerfusion,color=Muis))+
   geom_point()+geom_line()+facet_wrap(~Group)+

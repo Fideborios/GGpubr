@@ -394,3 +394,24 @@ gg= ggplot(data2,aes(x=reorder(website,freq),
 plot(gg)
 ```
 
+Line-point plots
+========================================================
+
+```{r}
+data4 <- read_excel("Data/Data for graphs.xlsx", sheet = "Sheet3")
+
+## Exercise: Now code your plot to look like this:
+gg <- ggplot(data=data4,aes(x=year,y=proportion,color=how))+
+  geom_point()+geom_line()+theme_minimal()+xlab("Year Couple Met")+ylab("percentage who met this way")+
+  scale_y_continuous(limits=c(0,0.7),breaks=seq(0,0.7,0.1),labels=scales::percent,expand=c(0,0))+
+  scale_x_continuous(limits=c(1990,2014),breaks=seq(1990,2014,10),expand=c(0,0))+
+  theme(legend.position = c(0.2,0.8))+geom_point(aes(shape=how))+scale_shape(guide=FALSE)+
+  scale_color_discrete(name="",breaks=c("Met Online","Met through Friends","Bar/Restaurant"))+facet_wrap(~orientation)
+
+```
+
+
+```{r}
+plot(gg)
+```
+

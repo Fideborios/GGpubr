@@ -1,0 +1,419 @@
+---
+title: "Data Visualization"
+author: "Jordache Ramjith"
+date: "August 1, 2018"
+output:
+  slidy_presentation: default
+  runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE,warning=FALSE,tidy.opts = list(width.cutoff=80),tidy=TRUE)
+```
+
+## Graph 1
+
+```{r, echo = TRUE}
+library(readxl)
+data1 <- read_excel("C:/Users/Jordache/Google Drive/Radboud University/Copy of Data for graphs.xlsx",sheet = "graph1")
+View(data1)
+```
+
+## 
+
+```{r echo = TRUE}
+library(ggplot2)
+graph1 = ggplot(data=data1,aes(x=App,y=Proportion))+
+geom_bar(stat="identity",fill="blue")
+graph1
+```
+
+
+
+
+
+## 
+
+```{r, echo = TRUE}
+#reorder category
+graph1 = ggplot(data=data1,aes(x=reorder(App,-Proportion),y=Proportion))+
+  geom_bar(stat="identity",fill="blue")
+graph1
+```
+
+
+## 
+
+```{r, echo= TRUE}
+#percentage scale
+graph1 = graph1 + scale_y_continuous(labels=scales::percent)
+graph1
+```
+
+##
+
+```{r, echo=TRUE}
+#relabel the axis
+graph1=graph1+xlab("")+ylab("Share of respondents")
+graph1
+```
+
+##
+```{r, echo=TRUE}
+#y axis 0 to 70
+graph1=graph1+ scale_y_continuous(breaks=seq(0,0.7,0.1),labels=scales::percent)
+graph1 
+```
+
+##
+```{r, echo = TRUE}
+#force y-axis to go up to 70%
+graph1=graph1+ scale_y_continuous(limits=c(0,0.7),breaks=seq(0,0.7,0.1),labels=scales::percent)
+graph1
+```
+
+##
+```{r, echo=TRUE}
+#remove indents
+graph1=graph1+scale_y_continuous(limits=c(0,0.7),breaks=seq(0,0.7,0.1),labels=scales::percent,expand=c(0,0))
+graph1
+```
+
+##
+```{r, echo=TRUE}
+#add numbers to the graph
+graph1=graph1+geom_text(aes(label=Proportion*100),size=3,vjust=-1)
+graph1
+```
+
+
+## GRAPH 2
+```{r echo=TRUE}
+library(readxl)
+data2 <- read_excel("C:/Users/Jordache/Google Drive/Radboud University/Copy of Data for graphs.xlsx", sheet = "Sheet2")
+View(data2)
+```
+
+## Simple plot
+```{r echo=TRUE}
+graph2 = ggplot(data=data2,aes(x=reorder(website,freq),y=freq,fill=nature))+
+  scale_y_continuous(limits=c(0,300000),breaks=seq(0,300000,50000),expand=c(0,0))+
+  geom_bar(stat="identity")
+graph2
+```
+
+## Flip the axis and remove axis labels
+```{r echo=TRUE}
+graph2 = graph2+coord_flip() + ylab("")+xlab("")
+graph2
+```
+
+## Reposition and relabel the legend
+```{r echo=TRUE}
+#Note the difference between scale_fill_discrete and scale_color_discrete
+graph2=graph2+
+  scale_fill_discrete(name="Relationship\nnature",breaks=c("Romantic relationship","Friendly relationship","Sexual relationship"),labels=c("Romantic","Friendly","Sexual"))+
+  theme(legend.position = c(0.85,0.25),legend.title=element_text(size=8),legend.text=element_text(size=8))
+graph2
+```
+
+
+## Adjust scale limits on x axis and add numbers to the plot
+```{r echo=TRUE}
+#Adjusting the scale limits must be done before flipping the coordinates.
+graph2=graph2+geom_text(aes(label=freq),size=3,hjust=-0.1)
+graph2
+```
+
+## Adding a title to the plot
+```{r echo=TRUE}
+graph2=graph2+ggtitle("Online dating services in the Netherlands in June 2014")
+graph2
+```
+
+
+## Aesthetics
+Remove the grey background. 
+```{r echo=T,eval=FALSE}
+#This must be done immediately after the ggplot function.
++theme_minimal()
+```
+```{r}
+graph2 = ggplot(data=data2,aes(x=reorder(website,freq),y=freq,fill=nature))+theme_minimal() +
+  scale_y_continuous(limits=c(0,300000),breaks=seq(0,300000,50000),expand=c(0,0))+
+  geom_bar(stat="identity")+coord_flip() + ylab("")+xlab("")+
+  scale_fill_discrete(name="Relationship\nnature",breaks=c("Romantic relationship","Friendly relationship","Sexual relationship"),labels=c("Romantic","Friendly","Sexual"))+
+  theme(legend.position = c(0.85,0.25),legend.title=element_text(size=8),legend.text=element_text(size=8))+
+  geom_text(aes(label=freq),size=3,hjust=-0.1)+
+  ggtitle("Online dating services in the Netherlands in June 2014")
+graph2
+```
+
+##Remove grey AND the grids
+```{r echo=T,eval=FALSE}
++theme_bw() +theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))
+```
+
+```{r}
+graph2 = ggplot(data=data2,aes(x=reorder(website,freq),y=freq,fill=nature))+theme_bw() +theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))+
+  scale_y_continuous(limits=c(0,300000),breaks=seq(0,300000,50000),expand=c(0,0))+
+  geom_bar(stat="identity")+coord_flip() + ylab("")+xlab("")+
+  scale_fill_discrete(name="Relationship\nnature",breaks=c("Romantic relationship","Friendly relationship","Sexual relationship"),labels=c("Romantic","Friendly","Sexual"))+
+  theme(legend.position = c(0.85,0.25),legend.title=element_text(size=8),legend.text=element_text(size=8))+
+  geom_text(aes(label=freq),size=3,hjust=-0.1)+
+  ggtitle("Online dating services in the Netherlands in June 2014")
+graph2
+```
+
+## Make a wider gap between bars
+
+```{r echo=T, eval=FALSE}
+#Must be added to the geom_bar statement.
++geom_bar(stat="identity",position=position_dodge(width=0.5))
+```
+
+```{r}
+graph2 = ggplot(data=data2,aes(x=reorder(website,freq),y=freq,fill=nature))+theme_bw() +theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line = element_line(colour = "black"))+
+  scale_y_continuous(limits=c(0,300000),breaks=seq(0,300000,50000),expand=c(0,0))+
+  geom_bar(stat="identity",position=position_dodge(width=1))+coord_flip() + ylab("")+xlab("")+
+  scale_fill_discrete(name="Relationship\nnature",breaks=c("Romantic relationship","Friendly relationship","Sexual relationship"),labels=c("Romantic","Friendly","Sexual"))+
+  theme(legend.position = c(0.85,0.25),legend.title=element_text(size=8),legend.text=element_text(size=8))+
+  geom_text(aes(label=freq),size=3,hjust=-0.1)+
+  ggtitle("Online dating services in the Netherlands in June 2014")
+graph2
+```
+
+
+## Changing colours
+Darker version of the standard red/green/blue
+```{r echo=TRUE}
+graph2+scale_fill_hue(l=40,c=35)
+```
+
+
+## Using RColorBrewer palettes
+You can google to find the different palettes and codes. Example:
+```{r echo=TRUE}
+graph2+scale_fill_brewer(palette="Dark2")
+```
+
+## Manual colours
+```{r echo=TRUE}
+graph2+scale_fill_manual(values=c("#999999","#E69F00","#56B4E9"))
+```
+
+## Manual colours
+```{r echo=TRUE}
+graph2+scale_fill_manual(values=c("red","blue","green"))
+```
+
+## Predefined colour names
+
+```{r fig.width=20,echo=FALSE}
+d=data.frame(c=colors(), y=seq(0, length(colors())-1)%%66, x=seq(0, length(colors())-1)%/%66)
+
+ggplot() +
+
+scale_x_continuous(name="", breaks=NULL, expand=c(0, 0)) +
+
+scale_y_continuous(name="", breaks=NULL, expand=c(0, 0)) +
+
+scale_fill_identity() +
+
+geom_rect(data=d, mapping=aes(xmin=x, xmax=x+1, ymin=y, ymax=y+1), fill="white") +
+
+geom_rect(data=d, mapping=aes(xmin=x+0.05, xmax=x+0.95, ymin=y+0.5, ymax=y+1, fill=c)) +
+
+geom_text(data=d, mapping=aes(x=x+0.5, y=y+0.5, label=c), colour="black", hjust=0.5, vjust=1, size=3)
+```
+
+## Graph 3
+```{r echo=TRUE}
+library(readxl)
+data3 <- read_excel("C:/Users/Jordache/Google Drive/Radboud University/Copy of Data for graphs.xlsx", 
+                    sheet = "Sheet4")
+View(data3)
+```
+
+## Basic plot
+```{r echo=TRUE}
+graph3=ggplot(data=data3, aes(x=App,y=Proportion,ymin=LCI, ymax=UCI))+
+  geom_point()+geom_errorbar(width=0.25)
+graph3
+```
+
+## Previous asthetics
+```{r echo=TRUE}
+graph3=ggplot(data=data3,aes(x=reorder(App,-Proportion),y=Proportion,ymin=LCI,ymax=UCI))+
+  theme_minimal()+geom_point()+geom_errorbar(width=0.25)+
+  scale_y_continuous(limits=c(0,0.8),breaks=seq(0,0.8,0.1),labels=scales::percent,expand=c(0,0))+
+  xlab("")+ylab("Share of respondents")+
+  geom_text(aes(label=Proportion*100),size=3,hjust=-1)
+
+graph3
+```
+
+## Graph 4 
+```{r echo=TRUE}
+library(readxl)
+data4 <- read_excel("C:/Users/Jordache/Google Drive/Radboud University/Copy of Data for graphs.xlsx", 
+                    sheet = "Sheet3")
+View(data4)
+```
+
+## Simple plot
+```{r echo=TRUE}
+graph4 = ggplot(data=data4,aes(x=year,y=proportion,color=how))+
+  geom_point()+geom_line()
+graph4
+```
+
+## Heterosexual couples only
+```{r echo=TRUE}
+graph4a = ggplot(data=data4[data4$orientation=="Heterosexual Couples",],aes(x=year,y=proportion,color=how))+
+  geom_point()+geom_line()
+graph4a
+```
+
+## Homosexual couples only
+```{r echo=TRUE}
+graph4b = ggplot(data=data4[data4$orientation=="Homosexual Couples",],aes(x=year,y=proportion,color=how))+
+  geom_point()+geom_line()
+graph4b
+```
+
+## Together
+```{r echo=TRUE}
+graph4=graph4+facet_wrap(~orientation)
+graph4
+```
+
+## Cleaned up plot
+```{r echo=TRUE}
+graph4 = graph4+theme_minimal()+xlab("Year Couple Met")+ylab("percentage who met this way")+
+  scale_y_continuous(limits=c(0,0.7),breaks=seq(0,0.7,0.1),labels=scales::percent,expand=c(0,0))+
+  scale_x_continuous(limits=c(1990,2014),breaks=seq(1990,2014,10),expand=c(0,0))+
+  theme(legend.position = c(0.2,0.8))+geom_point(aes(shape=how))+scale_shape(guide=FALSE)+
+  scale_color_discrete(name="",breaks=c("Met Online","Met through Friends","Bar/Restaurant"))
+  
+graph4  
+```
+
+
+## Assignment 1
+1. Replicate the following graph. The data can be found in CLI_data_long.sav
+
+```{r echo=TRUE}
+library(haven)
+CLI_data_long <- read_sav("Datasets/CLI_data_long.sav")
+View(CLI_data_long)
+```
+
+```{r , fig.width=15, echo=FALSE}
+ggplot(data=CLI_data_long,aes(x=Day,y=RelativePerfusion,color=Muis))+
+  geom_point()+geom_line()+facet_wrap(~Group)+
+  theme(legend.title = element_text(size=8),legend.text=element_text(size=7))+
+  ylab("Mean Relative Perfusion")+scale_y_continuous(limits=c(0,1.3),breaks=seq(0,1.3,0.2),expand=c(0,0))+
+  scale_x_continuous(limits=c(0,14.5),breaks=seq(0,14.5,1))
+```
+ 
+2. In order to get the plot above by Donor instead of by muis, we would need to use the dplyr package to summarize the data. This is because there are multiple observations for the same donor across the different days. We will need to find the means.
+
+```{r echo=TRUE}
+library(dplyr)
+mean_data<-group_by(CLI_data_long,Donor,Day,Group) %>%
+            dplyr::summarise(RelativePerfusion=mean(RelativePerfusion,na.rm=TRUE))
+View(mean_data)
+```
+
+Now it should be easy to complete the plot using your previous code and the new summarized data.
+
+```{r , fig.width=15, echo=FALSE}
+ggplot(data=mean_data,aes(x=Day,y=RelativePerfusion,color=Donor))+
+  geom_point()+geom_line()+facet_wrap(~Group)+
+  theme(legend.title = element_text(size=8),legend.text=element_text(size=7))+
+  ylab("Mean Relative Perfusion")+scale_y_continuous(limits=c(0,1.3),breaks=seq(0,1.3,0.2),expand=c(0,0))+
+  scale_x_continuous(limits=c(0,14.5),breaks=seq(0,14.5,1))
+```
+
+## Assignment 2
+
+1. Replicate the following graph. The data can be found in SkullRats.sav
+
+```{r echo=TRUE}
+library(haven)
+SkullRats <- read_sav("Datasets/SkullRats.sav")
+View(SkullRats)
+```
+
+```{r , fig.width=15, echo=TRUE}
+#To change the treatment names to control, High dose and Low dose we do the following:
+SkullRats$treat=as.factor(SkullRats$treat)
+levels(SkullRats$treat)
+levels(SkullRats$treat)<-c("Control","High dose","Low dose")
+levels(SkullRats$treat)
+
+ggplot(data=SkullRats,aes(x=age,y=response,color=as.factor(rat)))+
+  geom_point()+geom_line()+facet_wrap(~treat)+
+  theme(legend.title = element_text(size=8),legend.text=element_text(size=7))+
+  ylab("Mean Response in pixels")+scale_y_continuous(limits=c(65,92.5),breaks=seq(65,92.5,5),expand=c(0,0))+
+  xlab("Age in days")+scale_x_continuous(limits=c(50,110),breaks=seq(50,110,10))+
+  scale_color_discrete(name="Rat")+ggtitle("Treatment")+theme(plot.title = element_text(hjust=0.5,size = 10))
+```
+
+2. Create a graph indicating the mean growth of each group (average over the rats)
+We would be first required to find the summary data. i.e. find the mean and the confidence intervals. We have used the dplyr package to previously find the means, we will now extend it to find the standard deviation and the sample size for each timepoint/treatment combination. We then calculate the SE's and we use the critical points of the t-distribution (we don't naively use 1.96). The code for programming this in R is: 
+
+```{r echo=TRUE}
+mean_data<-group_by(SkullRats,age,treat) %>%
+            dplyr::summarise(mean.res=mean(response,na.rm=TRUE),
+                             sd.res=sd(response,na.rm = TRUE),
+                              n.res=n()) %>%
+  mutate(se.res=sd.res/sqrt(n.res),
+         LCI=mean.res-qt(0.975,n.res-1)*se.res,
+         UCI=mean.res+qt(0.975,n.res-1)*se.res)
+            
+View(mean_data)
+```
+
+(a) Do this by three different grids for the treatment groups
+
+```{r , fig.width=15, echo=TRUE}
+ggplot(data=mean_data,aes(x=age,y=mean.res,ymin=LCI,ymax=UCI))+
+  geom_point()+geom_line()+geom_errorbar(width=5)+facet_wrap(~treat)+
+  theme(legend.title = element_text(size=8),legend.text=element_text(size=7))+
+  ylab("Mean Response in pixels")+scale_y_continuous(limits=c(65,92.5),breaks=seq(65,92.5,5),expand=c(0,0))+
+  xlab("Age in days")+scale_x_continuous(limits=c(50,110),breaks=seq(50,110,10))+
+  scale_color_discrete(name="Rat")+ggtitle("Treatment")+theme(plot.title = element_text(hjust=0.5,size = 10))
+```
+
+(b) And on a combined plot represented by the colours red (Control), green (High dose) and blue (Low dose).
+
+```{r , fig.width=15, echo=TRUE}
+
+plot.theme=theme_bw()+ 
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border=element_blank(),
+        panel.background =element_blank(),
+        axis.line = element_line(colour = "black",size=1),
+        plot.title = element_text(hjust=0.5,size = 12,face="bold"),
+        axis.title = element_text(size=12,face="bold"),
+        axis.text =element_text(size=10,colour = "black",face="bold"),
+        legend.title =element_text(size=12),
+        legend.text=element_text(size=10),
+        legend.position = c(0.8,0.2))
+
+ggplot(data=mean_data,aes(x=age,y=mean.res,ymin=LCI,ymax=UCI,colour=treat))+
+  plot.theme+
+  geom_point(size=1.5,position=position_dodge(width=3))+
+  geom_line(size=1,position=position_dodge(width=3))+
+  geom_errorbar(width=3,size=1,position=position_dodge(width=3))+
+  ylab("Mean Response in pixels")+  scale_y_continuous(limits=c(65,90),breaks=seq(65,90,5),expand=c(0,0))+
+  xlab("Age in days")+ scale_x_continuous(limits=c(40,121),breaks=seq(40,121,10),expand=c(0,0))+
+  ggtitle("Rat Skull Development")+
+  scale_colour_manual(name=" ",breaks=c("Control","Low dose", "High dose"),
+                      values=c("red1","green1","blue1"))
+
+```
+
