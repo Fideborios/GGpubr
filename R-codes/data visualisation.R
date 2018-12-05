@@ -250,7 +250,7 @@ ggplot(data=SkullRats,aes(x=age,y=response,color=as.factor(rat)))+
 #We would be first required to find the summary data. i.e. find the mean and the confidence intervals. We have used the dplyr package to previously find the means. 
 
 library(dplyr)
-mean_data<-group_by(SkullRats,age,treat) %>%
+mean_data<-group_by(skullrats,age,treat) %>%
   dplyr::summarise(mean.res=mean(response,na.rm=TRUE),
                    sd.res=sd(response,na.rm = TRUE),
                    n.res=n()) %>%

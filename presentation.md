@@ -4,6 +4,29 @@ author: Michail Belias
 date: 06-12-2018
 autosize: true
 class: small-code
+width: 1980
+height: 1200
+autosize: true
+
+
+Install and load the packages we will use
+========================================================
+
+- You can do it manually through the "install" dialog in the "packages" tab 
+
+
+```r
+if(!require(haven)) install.packages("haven")
+if(!require(dplyr)) install.packages("dplyr")
+if(!require(ggpubr))library(ggpubr)
+if(!require(ggplot2)) install.packages("ggplot2")
+if(!require(readxl))library(readxl)
+if(!require(gapminder)) install.packages("gapminder")
+if(!require(ggExtra)) install.packages("ggExtra")
+if(!require(ggsci))library(ggsci)
+```
+
+
 
 
 
@@ -22,21 +45,32 @@ What is ggpubr:
  * Is still a ggplot2 object... 
    * Therefore, it can be further manipulated as a ggplot object
 
-Generate some data for descriptive statistics
+First we load the data
 ========================================================
+
+- We can either use the command line or load them manually
+- Use the "Import Dataset" dialog in the Enviroment Tab
 
 
 ```r
-library(haven)
 bladder   <- read_sav("Data/bladder.sav")
 surgery   <- read_sav("Data/surgery.sav")
 skullrats <- read_sav("Data/SkullRats.sav")
 ```
 
 
-Know thyself...and your data
+
+Know your data
 ========================================================
 
+- Feel free to use your own data in our lab
+- with the following commands we can get in touch with our data
+  * summary("dataname"), names("dataname"), head("dataname") 
+- Use the help tab in your right to see what the functions do (and their options)
+- Please play around with the data
+
+Know your data (part2)
+========================================================
 
 ```r
 names(bladder)
@@ -57,9 +91,6 @@ names(surgery)
 [7] "infect"   "prematur" "surgery" 
 ```
 
-Know thyself...and your data (part2)
-========================================================
-
 ```r
 names(skullrats)
 ```
@@ -72,73 +103,134 @@ names(skullrats)
 Distribution plots
 ========================================================
 
-Under this section we consider 
+Under this section we will show how to plot 
 
- * Boxplots
- * Violin + Boxplot
- * Dot + Box Plot
- * Histograms
- * Density Plots
+ * Boxplots...........(with ggboxplot) 
+ * Histograms.........(with gghistogram)
+ * Density Plots......(with ggdensity)
 
-
+For every function above there is a full description in their help file.
+Go to the tab "Help" and write the function in the search box
 
 Boxplot code 
 ========================================================
 
+First we will see a simple box-plot
+
 
 ```r
-gg<- ggboxplot(surgery , # the data-set
-            x = "gender", 
-            y = "birthwt", # variable to be plotted
-            color = "black", # paint the borders by Gender
-            fill = "gender", # fill the boxes with color
-title = "Box-plot of birth-weight colored by gender", # a better title
-            palette = "jco", # use the jco palette
-            add = "mean", # or median
-            bxp.errorbar = T  # adds the error bars of boxplots 
-            ) +   
-  theme(plot.title = element_text(hjust = 0.5))
+gg<- ggboxplot(surgery ,  # the data-set
+            x = "gender", # the x-values is the categorical variable
+            y = "birthwt" # the y-values is their values 
+            )
 ```
 
 Boxplot
 ========================================================
-![plot of chunk unnamed-chunk-6](Figs/unnamed-chunk-6-1.png)
+![plot of chunk unnamed-chunk-7](Figs/unnamed-chunk-7-1.png)
+
+
+
+Full boxplot code 
+========================================================
+
+- Search the help file of ggboxplot
+- *Tip:* If you select any function and press F1 you go to the function's help file right away
+
+
+```r
+ggboxplot(data, x, y, # load the data and choose the x and y variables
+  combine = FALSE, merge = FALSE, color = "black", 
+  fill = "white", palette = NULL, title = NULL, xlab = NULL,
+  ylab = NULL, bxp.errorbar = FALSE, bxp.errorbar.width = 0.4,
+  facet.by = NULL, panel.labs = NULL, short.panel.labs = TRUE,
+  linetype = "solid", size = NULL, width = 0.7, notch = FALSE,
+  select = NULL, remove = NULL, order = NULL, add = "none",
+  add.params = list(), error.plot = "pointrange", label = NULL,
+  font.label = list(size = 11, color = "black"), label.select = NULL,
+  repel = FALSE, label.rectangle = FALSE, ggtheme = theme_pubr())
+```
+
+Full boxplot code 
+========================================================
+
+
+```r
+gg <- ggboxplot(data = surgery,x =  "gender", y = "birthwt",
+          xlab = "Gender", ylab = "Birth Weight (in grams)",
+          width = 0.5,add = "jitter", 
+          shape = "gender",fill = "gender",palette = "simpsons",
+          title = "A boxplot of weight at the time of birth",
+          legend = "bottom",legend.title="Gender",font.legend = c(10, "bold", "darkgrey"),  
+          font.main = c(18, "italic", "black"),
+          subtitle = "Male and female infants compared ", font.subtitle = c(12, "bold.italic", "darkgreen"),
+          ggtheme = theme_minimal()
+) +   
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5)) + 
+  stat_compare_means(method = "wilcox.test")#  Add a p-value
+```
+
+Boxplot
+========================================================
+![plot of chunk unnamed-chunk-10](Figs/unnamed-chunk-10-1.png)
+
+Simple histogram code 
+========================================================
+
+
+```r
+# Basic histogram plot
+gghistogram(surgery, x = "birthwt")
+```
+
+![plot of chunk unnamed-chunk-11](Figs/unnamed-chunk-11-1.png)
+
 
 Histogram code 
 ========================================================
 
 
 ```r
-gg<- gghistogram(surgery, 
-            x= "birthwt" ,   # variable to be plotted
-            y= "..count..", # or "..density.."
-            color = "gender", # paint the borders by Gender
-            fill = "gender", # fill the bars with color
+gg<- gghistogram(surgery, x = "birthwt",y = "..density..",add = "median",
             bins = 10 , # how many bars will the histogram have
-title = "Histogram of birth-weight (by gender)", # a better title
-            palette = "jco", # use the jco palette
-            add = "mean", 
-            add_density = T
-            ) +   theme(plot.title = element_text(hjust = 0.5))
+            xlab = "Weight at birth (in grams)", ylab = "Density",
+            title = "Histogram of infant weight at birth",
+            fill = "gender",color = "grey",palette = "lancet",
+            alpha = 0.2,legend = "bottom",legend.title="Gender",
+            font.legend = c(10, "bold", "darkgrey"), facet.by = "infect", ggtheme = theme_minimal(), add_density = T )+   
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
 ```
 
 Histogram plot 
 ========================================================
-![plot of chunk unnamed-chunk-8](Figs/unnamed-chunk-8-1.png)
+![plot of chunk unnamed-chunk-13](Figs/unnamed-chunk-13-1.png)
+
+
+Simple Density plot code 
+========================================================
+
+```r
+# Basic Density plot 
+ggdensity(surgery, x = "birthwt")
+```
+
+![plot of chunk unnamed-chunk-14](Figs/unnamed-chunk-14-1.png)
 
 Density plot code
 ========================================================
 
 
 ```r
-gg <-  ggdensity(surgery, 
-          x = "birthwt",
-          fill = "gender",
-          palette = "jco", 
-          adjust = 3,
-          title = "Density plot of weight", 
-          linetype = "dotdash",color = "gender",add = "median" ) +   
-  theme(plot.title = element_text(hjust = 0.5))+ facet_wrap(.~ gender, nrow = 2)
+gg <-  ggdensity(surgery, x = "birthwt",add = "median",
+            xlab = "Weight at birth (in grams)", ylab = "Frequency",
+            title = "Density plot of infant weight at birth",
+            fill = "gender",color = "grey",palette = "lancet",
+            alpha = 0.2,legend = "bottom",legend.title="Gender",
+            font.legend = c(10, "bold", "darkgrey"), facet.by = "infect", ggtheme = theme_minimal() )+   
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
 ```
 
 Density plot 
@@ -149,44 +241,22 @@ Density plot
 plot(gg)
 ```
 
-![plot of chunk unnamed-chunk-10](Figs/unnamed-chunk-10-1.png)
+![plot of chunk unnamed-chunk-16](Figs/unnamed-chunk-16-1.png)
 
 
 
 
-Violin plot with boxplot code 
+Scatterplots
 ========================================================
 
+What we learned so far?
 
-```r
-gg <-ggviolin(surgery ,
-            x = "gender", y = "birthwt", # variable to be plotted
-          combine = TRUE, title="Violin-plot with boxplot",
-          color = "gender", palette = "jco",
-          ylab = "Expression", 
-          add = "boxplot")+   
-  theme(plot.title = element_text(hjust = 0.5))
-```
-
-Violin plot with boxplot 
-========================================================
-![plot of chunk unnamed-chunk-12](Figs/unnamed-chunk-12-1.png)
-
-
-
-
-
-2.Correlation plots 
-========================================================
-
-Under this section we consider 
-
- * Scatterplots
- * Jitter Plots
- * Counts Chart
- * Bubble Plot
- * Marginal Histograms / Boxplot
-
+1) We use the help file of the gg"function"
+2) All the gg functions we:
+  - compatible with ggpar() function options
+  - produced ggplot2 objects
+  - which we can further manipulate using ggplot2 functions
+    - theme() , facet_grid() etc are really useful
 
 Scatterplots-Bubble plot code
 ========================================================
@@ -194,103 +264,56 @@ Scatterplots-Bubble plot code
 ```r
 gapminder = gapminder
 # Scatterplot
-names(gapminder) =  c("Country","Continent","Year","Life_Expectancy",
-                      "Population","GDP_per_capita_percentage")
+names(gapminder) =  c("Country","Continent","Year","Life_Expectancy","Population","GDP_per_capita_percentage")
 
 gg = gapminder%>%
     filter(Year %in% "2007")%>%
-ggplot( aes(GDP_per_capita_percentage, Life_Expectancy,size = Population, 
-            color = Continent)) + # This is then main plot 
-  ggtitle("Life expectancy association with GDP per capita percentage (in 2007)")+
-  # a new title
-  theme(plot.title = element_text(hjust = 0.5))+
-    geom_point() + # insert the points of the parameters used in the general ggplot
-  xlab("GDP per capita") + # Change the label of X-axis
-  ylab("Life Expectancy") # Change the label of Y-axis
+ggscatter( x = "GDP_per_capita_percentage", y = "Life_Expectancy",
+           size = "Population", 
+            color = "Continent", 
+           title = "Life expectancy association with GDP per capita percentage (in 2007)",
+           xlab = ,ylab = "Life Expectancy",
+           legend.position = "right") + 
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 Scatterplots Bubble plot 
 ========================================================
 
-![plot of chunk unnamed-chunk-14](Figs/unnamed-chunk-14-1.png)
+![plot of chunk unnamed-chunk-18](Figs/unnamed-chunk-18-1.png)
 
-
- 
- 
 Scatter-plot code
 ========================================================
 
-
-```r
-# Scatterplot
-
-
-g = ggscatter(surgery , # import data
-              x = "birthwt",y = "gestatio", # x-y values
-              color = "gender", palette = "jco",
-              title = "Association of gestational age and birth weight (by gender)",
-              xlab = "Birth weight (in kilograms)",
-              ylab = "Gestational age", 
-              shape = 1,
-              ggtheme = theme_bw(),
-              fill = "white"
-              )
-```
-
-Scatter-plot
-======================================================== 
-
-![plot of chunk unnamed-chunk-16](Figs/unnamed-chunk-16-1.png)
-
-
-Scatterplot with marginal histograms
-======================================================== 
-
-
-```r
-ggMarginal(g, type = "histogram", fill="transparent")
-```
-
-![plot of chunk unnamed-chunk-17](Figs/unnamed-chunk-17-1.png)
-
-Error plots
-======================================================== 
-
-
-```
-   len supp dose
-1  4.2   VC  0.5
-2 11.5   VC  0.5
-3  7.3   VC  0.5
-4  5.8   VC  0.5
-5  6.4   VC  0.5
-6 10.0   VC  0.5
-```
-
-
-```r
-# Change error plot type and add mean points
-ggerrorplot(ToothGrowth, x = "dose", y = "len", 
-            desc_stat = "mean_sd",
-            error.plot = "errorbar",            # Change error plot type
-            add = "mean"                        # Add mean points
-            )
-```
-
+Can we make this plot?
 ![plot of chunk unnamed-chunk-19](Figs/unnamed-chunk-19-1.png)
 
-Ranking plots
-========================================================
 
- * (Ordered) Bar Chart
- * Lollipop Chart
- * Dot Plot
- * Slope Chart
- * Dumbbell Plot
+Simple point-line plots
+======================================================== 
+
+![plot of chunk unnamed-chunk-20](Figs/unnamed-chunk-20-1.png)
+
+Spaggetti plots
+======================================================== 
+
+
+```r
+ggplot(data=skullrats,aes(x=age,y=response,color=as.factor(rat)))+
+  geom_point()+geom_line()+facet_wrap(~treat)+
+  theme(legend.title = element_text(size=8),legend.text=element_text(size=7))+
+  ylab("Mean Response in pixels")+scale_y_continuous(limits=c(65,92.5),breaks=seq(65,92.5,5),expand=c(0,0))+
+  xlab("Age in days")+scale_x_continuous(limits=c(50,110),breaks=seq(50,110,10))+
+  scale_color_discrete(name="Rat")+ggtitle("Treatment")+theme(plot.title = element_text(hjust=0.5,size = 10))
+```
+
+![plot of chunk unnamed-chunk-21](Figs/unnamed-chunk-21-1.png)
 
 
 
-Bar Chart code
+
+
+Bar plots code
 ========================================================
 
 
@@ -313,7 +336,7 @@ gg= ggbarplot(data = data1, #import  Data
 Bar Chart
 ========================================================
 
-![plot of chunk unnamed-chunk-22](Figs/unnamed-chunk-22-1.png)
+![plot of chunk unnamed-chunk-24](Figs/unnamed-chunk-24-1.png)
 
 
 Ordered bar chart code
@@ -347,7 +370,7 @@ Ordered bar chart
 plot(gg)
 ```
 
-![plot of chunk unnamed-chunk-25](Figs/unnamed-chunk-25-1.png)
+![plot of chunk unnamed-chunk-27](Figs/unnamed-chunk-27-1.png)
 
 Lollipop Chart code
 ========================================================
@@ -374,7 +397,7 @@ gg= ggplot(data2,aes(x=reorder(website,freq),
 plot(gg)
 ```
 
-![plot of chunk unnamed-chunk-27](Figs/unnamed-chunk-27-1.png)
+![plot of chunk unnamed-chunk-29](Figs/unnamed-chunk-29-1.png)
 
 Line-point plots code
 ========================================================
@@ -400,5 +423,17 @@ Line-point plots
 plot(gg)
 ```
 
-![plot of chunk unnamed-chunk-29](Figs/unnamed-chunk-29-1.png)
+![plot of chunk unnamed-chunk-31](Figs/unnamed-chunk-31-1.png)
+
+
+
+
+
+```
+  |                                                                         |                                                                 |   0%  |                                                                         |.                                                                |   2%  |                                                                         |..                                                               |   3%  |                                                                         |...                                                              |   5%  |                                                                         |....                                                             |   6%  |                                                                         |.....                                                            |   8%  |                                                                         |......                                                           |   9%  |                                                                         |.......                                                          |  11%  |                                                                         |........                                                         |  12%  |                                                                         |.........                                                        |  14%  |                                                                         |..........                                                       |  15%  |                                                                         |...........                                                      |  17%  |                                                                         |............                                                     |  18%  |                                                                         |.............                                                    |  20%  |                                                                         |..............                                                   |  22%  |                                                                         |...............                                                  |  23%  |                                                                         |................                                                 |  25%  |                                                                         |.................                                                |  26%  |                                                                         |..................                                               |  28%  |                                                                         |...................                                              |  29%  |                                                                         |....................                                             |  31%  |                                                                         |.....................                                            |  32%  |                                                                         |......................                                           |  34%  |                                                                         |.......................                                          |  35%  |                                                                         |........................                                         |  37%  |                                                                         |.........................                                        |  38%  |                                                                         |..........................                                       |  40%  |                                                                         |...........................                                      |  42%  |                                                                         |............................                                     |  43%  |                                                                         |.............................                                    |  45%  |                                                                         |..............................                                   |  46%  |                                                                         |...............................                                  |  48%  |                                                                         |................................                                 |  49%  |                                                                         |.................................                                |  51%  |                                                                         |..................................                               |  52%  |                                                                         |...................................                              |  54%  |                                                                         |....................................                             |  55%  |                                                                         |.....................................                            |  57%  |                                                                         |......................................                           |  58%  |                                                                         |.......................................                          |  60%  |                                                                         |........................................                         |  62%  |                                                                         |.........................................                        |  63%  |                                                                         |..........................................                       |  65%  |                                                                         |...........................................                      |  66%  |                                                                         |............................................                     |  68%  |                                                                         |.............................................                    |  69%  |                                                                         |..............................................                   |  71%  |                                                                         |...............................................                  |  72%  |                                                                         |................................................                 |  74%  |                                                                         |.................................................                |  75%  |                                                                         |..................................................               |  77%  |                                                                         |...................................................              |  78%  |                                                                         |....................................................             |  80%  |                                                                         |.....................................................            |  82%  |                                                                         |......................................................           |  83%  |                                                                         |.......................................................          |  85%  |                                                                         |........................................................         |  86%  |                                                                         |.........................................................        |  88%  |                                                                         |..........................................................       |  89%  |                                                                         |...........................................................      |  91%  |                                                                         |............................................................     |  92%  |                                                                         |.............................................................    |  94%  |                                                                         |..............................................................   |  95%  |                                                                         |...............................................................  |  97%  |                                                                         |................................................................ |  98%  |                                                                         |.................................................................| 100%
+```
+
+```
+[1] "presentation.R"
+```
 

@@ -1,170 +1,184 @@
-## ---- echo=FALSE, warning=FALSE, message=FALSE---------------------------
-
+## ------------------------------------------------------------------------
 if(!require(haven)) install.packages("haven")
-if(!require(knitr)) install.packages("knitr")
 if(!require(dplyr)) install.packages("dplyr")
-if(!require(qwraps2)) install.packages("qwraps2")
+if(!require(ggpubr))library(ggpubr)
 if(!require(ggplot2)) install.packages("ggplot2")
-if(!require(MASS)) install.packages("MASS")
+if(!require(readxl))library(readxl)
 if(!require(gapminder)) install.packages("gapminder")
 if(!require(ggExtra)) install.packages("ggExtra")
-if(!require(ggpubr))library(ggpubr)
-if(!require(readxl))library(readxl)
-if(!require(ggplot2))library(ggplot2)
 if(!require(ggsci))library(ggsci)
 
+## ---- echo=FALSE, warning=FALSE, message=FALSE---------------------------
 
-opts_chunk$set(fig.width=9, fig.height=9, fig.path='Figs/', warning=FALSE, message=FALSE, fig.pos = "H", comment = "")
+opts_chunk$set(fig.width=8, fig.height=8, fig.path='Figs/', warning=FALSE, message=FALSE, comment = "")
 
 
 ## ------------------------------------------------------------------------
-
 bladder   <- read_sav("Data/bladder.sav")
 surgery   <- read_sav("Data/surgery.sav")
 skullrats <- read_sav("Data/SkullRats.sav")
 
 
+## ---- echo=FALSE, warning=FALSE, message=FALSE---------------------------
+surgery$gender =  factor(surgery$gender, labels = c("Male","Female"))
+surgery$place =  factor(surgery$place, labels = c(NA,"Outside regional","Local","Regional"))
+surgery$infect=  factor(surgery$infect, labels = c("No","Yes"))
+surgery$prematur=  factor(surgery$prematur, labels = c("Premature","Term"))
+surgery$surgery=  factor(surgery$surgery, labels = c("Abdominal","Cardiac","Other"))
+
+
+skullrats$treat =  factor(skullrats$treat, labels = c("High dose","Control","Low dose"))
+
+
+bladder   <- read_sav("Data/bladder.sav")
+
+bladder$gender =  factor(bladder$gender, labels = c("Male","Female"))
+bladder$Stage =  factor(bladder$Stage, labels = c("pTa","pT1"))
+bladder$Grade=  factor(bladder$Grade, labels = c("Good", "Moderate","Bad"))
+bladder$solitaire=  factor(bladder$solitaire, labels = c("Solitaire","Multiple"))
+bladder$Died=  as.numeric(bladder$Died)
+bladder$Therapy = factor(bladder$Therapy, labels = c("TUR only", "TUR + Chemo","TUR + Radio"))
+
 ## ------------------------------------------------------------------------
-gg<- ggboxplot(surgery , # the data-set
-            x = "gender", 
-            y = "birthwt", # variable to be plotted
-            color = "black", # paint the borders by Gender
-            fill = "gender", # fill the boxes with color
-            title = "Box-plot of birth-weight colored by gender", # a better title
-            palette = "jco", # use the jco palette
-            add = "mean", # or median
-            bxp.errorbar = T  # adds the error bars of boxplots 
-            ) +   
-  theme(plot.title = element_text(hjust = 0.5))
+names(bladder)
+names(surgery)
+names(skullrats)
+
+## ------------------------------------------------------------------------
+gg<- ggboxplot(surgery ,  # the data-set
+            x = "gender", # the x-values is the categorical variable
+            y = "birthwt" # the y-values is their values 
+            )
+
+## ----echo=FALSE----------------------------------------------------------
+plot(gg)
+
+## ----eval=FALSE----------------------------------------------------------
+ggboxplot(data, x, y, # load the data and choose the x and y variables
+  combine = FALSE, merge = FALSE, color = "black", 
+  fill = "white", palette = NULL, title = NULL, xlab = NULL,
+  ylab = NULL, bxp.errorbar = FALSE, bxp.errorbar.width = 0.4,
+  facet.by = NULL, panel.labs = NULL, short.panel.labs = TRUE,
+  linetype = "solid", size = NULL, width = 0.7, notch = FALSE,
+  select = NULL, remove = NULL, order = NULL, add = "none",
+  add.params = list(), error.plot = "pointrange", label = NULL,
+  font.label = list(size = 11, color = "black"), label.select = NULL,
+  repel = FALSE, label.rectangle = FALSE, ggtheme = theme_pubr())
+
+## ------------------------------------------------------------------------
+
+  
+gg <- ggboxplot(data = surgery,x =  "gender", y = "birthwt",
+          xlab = "Gender", ylab = "Birth Weight (in grams)",
+          width = 0.5,add = "jitter", 
+          shape = "gender",fill = "gender",palette = "simpsons",
+          title = "A boxplot of weight at the time of birth",
+          legend = "bottom",legend.title="Gender",font.legend = c(10, "bold", "darkgrey"),  
+          font.main = c(18, "italic", "black"),
+          subtitle = "Male and female infants compared ", font.subtitle = c(12, "bold.italic", "darkgreen"),
+          ggtheme = theme_minimal()
+) +   
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5)) + 
+  stat_compare_means(method = "wilcox.test")#  Add a p-value
 
 
 ## ----echo=FALSE----------------------------------------------------------
 plot(gg)
 
 ## ------------------------------------------------------------------------
+# Basic histogram plot
+gghistogram(surgery, x = "birthwt")
 
-gg <-ggviolin(surgery ,
-            x = "Gender", 
-            y = "Weight", # variable to be plotted
-          combine = TRUE, title="Violin-plot with boxplot",
-          color = "Gender", palette = "jco",
-          ylab = "Expression", 
-          add = "boxplot")+   
-  theme(plot.title = element_text(hjust = 0.5))
+## ------------------------------------------------------------------------
+gg<- gghistogram(surgery, x = "birthwt",y = "..density..",add = "median",
+            bins = 10 , # how many bars will the histogram have
+            xlab = "Weight at birth (in grams)", ylab = "Density",
+            title = "Histogram of infant weight at birth",
+            fill = "gender",color = "grey",palette = "lancet",
+            alpha = 0.2,legend = "bottom",legend.title="Gender",
+            font.legend = c(10, "bold", "darkgrey"), facet.by = "infect", ggtheme = theme_minimal(), add_density = T )+   
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
 
 
 ## ----echo=FALSE----------------------------------------------------------
 plot(gg)
 
 ## ------------------------------------------------------------------------
-gg<- ggdotplot(surgery ,
-            x = "Gender", 
-            y = "Weight", # variable to be plotted
-            combine = TRUE, 
-            color = "Gender", 
-            palette = "jco",
-            fill = "white",
-            binwidth = 0.1,
-            ylab = "Expression", 
-            add = "median_iqr",
-            add.params = list(size = 0.9)
-          )
-
-## ----echo=FALSE----------------------------------------------------------
-plot(gg)
+# Basic Density plot 
+ggdensity(surgery, x = "birthwt")
 
 ## ------------------------------------------------------------------------
-gg<- gghistogram(surgery, 
-            x= "Weight" ,   # variable to be plotted
-            y= "..count..", # or "..density.."
-            color = "Gender", # paint the borders by Gender
-            fill = "Gender", # fill the bars with color
-            bins = 25 , # control how many bars will the histogram have
-            title = "Histogram of weight colored by gender", # a better title
-            palette = "jco", # use the jco palette
-            add = "mean", 
-            add_density = T
-            ) +   theme(plot.title = element_text(hjust = 0.5))
-
-
-## ----echo=FALSE----------------------------------------------------------
-plot(gg)
-
-## ------------------------------------------------------------------------
-gg <-  ggdensity(surgery, 
-          x = "Weight",
-          fill = "Gender",
-          palette = "jco", 
-          adjust = 3,
-          title = "Density plot of weight", 
-          linetype = "dotdash",color = "Gender",
-          facet.by = "Gender",add = "mean" ) +   
-  theme(plot.title = element_text(hjust = 0.5))
+gg <-  ggdensity(surgery, x = "birthwt",add = "median",
+            xlab = "Weight at birth (in grams)", ylab = "Frequency",
+            title = "Density plot of infant weight at birth",
+            fill = "gender",color = "grey",palette = "lancet",
+            alpha = 0.2,legend = "bottom",legend.title="Gender",
+            font.legend = c(10, "bold", "darkgrey"), facet.by = "infect", ggtheme = theme_minimal() )+   
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
 
 ## ------------------------------------------------------------------------
 plot(gg)
 
 ## ----echo=TRUE-----------------------------------------------------------
-
 gapminder = gapminder
 # Scatterplot
-names(gapminder) =  c("Country","Continent","Year","Life_Expectancy",
-                      "Population","GDP_per_capita_percentage")
+names(gapminder) =  c("Country","Continent","Year","Life_Expectancy","Population","GDP_per_capita_percentage")
 
 gg = gapminder%>%
     filter(Year %in% "2007")%>%
-ggplot( aes(GDP_per_capita_percentage, Life_Expectancy,size = Population, 
-            color = Continent)) + # This is then main plot 
-  ggtitle("Life expectancy association with GDP per capita percentage (in 2007)")+
-  # a new title
-  theme(plot.title = element_text(hjust = 0.5))+
-    geom_point() + # insert the points of the parameters used in the general ggplot
-  theme(plot.title = element_text(hjust = 0.5)) + 
-  xlab("GDP per capita") + # Change the label of X-axis
-  ylab("Life Expectancy")+ # Change the label of Y-axis
-  scale_x_log10() # log-Scale X values 
-
+ggscatter( x = "GDP_per_capita_percentage", y = "Life_Expectancy",
+           size = "Population", 
+            color = "Continent", 
+           title = "Life expectancy association with GDP per capita percentage (in 2007)",
+           xlab = ,ylab = "Life Expectancy",
+           legend.position = "right") + 
+  theme(plot.title = element_text(hjust = 0.5))
 
 ## ---- echo=FALSE---------------------------------------------------------
 plot(gg)
 
-## ------------------------------------------------------------------------
+## ----echo=FALSE----------------------------------------------------------
 # Scatterplot
 
 
-g = ggscatter(surgery , x = "Weight",y = "Height", 
-              color = "Gender", palette = "jco",
-              title = "Association of weight and height in males and females",
-              xlab = "Weight measured in kilograms",
-              ylab = "Height measured in centimeters", 
-              shape = 1,
-              ggtheme = theme_bw(),
-              ellipse = T, 
-              ellipse.alpha = 0.4,
-              fill = "white"
-              )
+gg = ggscatter(data = surgery, x = "birthwt", y = "gestatio", combine = F, merge = T,
+          color = "gender",fill = "gender", palette = "lancet", 
+          shape = 1, size = 3,point = TRUE, rug = F, 
+          title = "Scatterplot of gestational age and birth weight", 
+          subtitle = "Faceted by infection information",
+          xlab = "Birth weight (in grams)", ylab = "Gestational age",
+          facet.by = "infect", 
+          panel.labs = list(gender = c("Male", "Female")) , 
+          short.panel.labs = TRUE,
+          add = "reg.line" , # c("none", "reg.line", "loess")
+          conf.int = T, conf.int.level = 0.95, fullrange = T, 
+          ggtheme = theme_minimal(),
+          label = "id", font.label = c(12, "italic"), font.family = "Comic Sans MS",
+          cor.coef = T, cor.coeff.args = list(method = "pearson", ## "pearson", "kendall", or "spearman"
+                                              label.x.npc = "left", label.y.npc = "top"),
+          cor.coef.coord = c(2000, 42.5), cor.coef.size = 3,show.legend.text = T, 
+          repel = T)+   
+        theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
 
-
-
-## ----echo=FALSE----------------------------------------------------------
-plot(g)
+plot(gg)
 # ggMarginal(g, type = "density", fill="transparent")
 
-## ------------------------------------------------------------------------
-ggMarginal(g, type = "histogram", fill="transparent")
 
 ## ----echo= FALSE---------------------------------------------------------
-# ToothGrowth
-data("ToothGrowth")
-head(ToothGrowth)
+# Basic plot
+ggplot(skullrats,aes(y= response, x = t, group= rat)) + geom_point() + geom_line()
 
 ## ------------------------------------------------------------------------
-# Change error plot type and add mean points
-ggerrorplot(ToothGrowth, x = "dose", y = "len", 
-            desc_stat = "mean_sd",
-            error.plot = "errorbar",            # Change error plot type
-            add = "mean"                        # Add mean points
-            )
+ggplot(data=skullrats,aes(x=age,y=response,color=as.factor(rat)))+
+  geom_point()+geom_line()+facet_wrap(~treat)+
+  theme(legend.title = element_text(size=8),legend.text=element_text(size=7))+
+  ylab("Mean Response in pixels")+scale_y_continuous(limits=c(65,92.5),breaks=seq(65,92.5,5),expand=c(0,0))+
+  xlab("Age in days")+scale_x_continuous(limits=c(50,110),breaks=seq(50,110,10))+
+  scale_color_discrete(name="Rat")+ggtitle("Treatment")+theme(plot.title = element_text(hjust=0.5,size = 10))
 
 ## ----echo= FALSE---------------------------------------------------------
 data1 <- read_excel("Data/Data for graphs.xlsx", 
@@ -236,4 +250,25 @@ gg= ggplot(data2,aes(x=reorder(website,freq),
 
 ## ------------------------------------------------------------------------
 plot(gg)
+
+## ------------------------------------------------------------------------
+data4 <- read_excel("Data/Data for graphs.xlsx", sheet = "Sheet3")
+
+## Exercise: Now code your plot to look like this:
+gg <- ggplot(data=data4,aes(x=year,y=proportion,color=how))+
+  geom_point()+geom_line()+theme_minimal()+xlab("Year Couple Met")+ylab("percentage who met this way")+
+  scale_y_continuous(limits=c(0,0.7),breaks=seq(0,0.7,0.1),labels=scales::percent,expand=c(0,0))+
+  scale_x_continuous(limits=c(1990,2014),breaks=seq(1990,2014,10),expand=c(0,0))+
+  theme(legend.position = c(0.2,0.8))+geom_point(aes(shape=how))+scale_shape(guide=FALSE)+
+  scale_color_discrete(name="",breaks=c("Met Online","Met through Friends","Bar/Restaurant"))+facet_wrap(~orientation)
+
+
+## ------------------------------------------------------------------------
+plot(gg)
+
+## ----echo=FALSE, message= FALSE------------------------------------------
+
+library(knitr)
+purl("presentation.Rpres")
+
 
