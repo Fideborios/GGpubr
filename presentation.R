@@ -1,14 +1,4 @@
----
-title: "How to make plots in R using ggpubr"
-author: "Michail Belias"
-date: "December 6, 2018"
-output:
-  slidy_presentation: default
-  ioslides_presentation: default
-  beamer_presentation: default
----
-
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
+## ---- echo=FALSE, warning=FALSE, message=FALSE---------------------------
 
 if(!require(haven)) install.packages("haven")
 if(!require(knitr)) install.packages("knitr")
@@ -26,58 +16,15 @@ if(!require(ggsci))library(ggsci)
 
 opts_chunk$set(fig.width=9, fig.height=9, fig.path='Figs/', warning=FALSE, message=FALSE, fig.pos = "H", comment = "")
 
-```
 
-Introduction
-========================================================
+## ------------------------------------------------------------------------
 
-The ggpubr is a R package that helps you create basic beautiful ggplot2-based graphs.
-
-What is ggpubr:
-
- * Wrapper around the ggplot2 package for beginners in R programming.
- * Helps researchers, with basic R programming skills, to create easily publication-ready plots.
- * Gives the possibility to add p-values and significance levels to plots.
- * Makes it easy to arrange and annotate multiple plots on the same page.
- * Makes it easy to change grahical parameters such as colors and labels.
- * Is still a ggplot2 object... 
-   * Therefore, it can be further manipulated as a ggplot object
-
-Generate some data for descriptive statistics
-========================================================
-
-```{r}
-library(haven)
 bladder   <- read_sav("Data/bladder.sav")
 surgery   <- read_sav("Data/surgery.sav")
 skullrats <- read_sav("Data/SkullRats.sav")
 
-```
 
-
-Know thyself...and your data
-========================================================
-
-
-
-
-Distribution plots
-========================================================
-
-Under this section we consider 
-
- * Boxplots
- * Violin + Boxplot
- * Dot + Box Plot
- * Histograms
- * Density Plots
-
-
-
-Boxplot code 
-========================================================
-
-```{r}
+## ------------------------------------------------------------------------
 gg<- ggboxplot(surgery , # the data-set
             x = "gender", 
             y = "birthwt", # variable to be plotted
@@ -90,41 +37,43 @@ gg<- ggboxplot(surgery , # the data-set
             ) +   
   theme(plot.title = element_text(hjust = 0.5))
 
-```
 
-Boxplot
-========================================================
-```{r echo=FALSE}
+## ----echo=FALSE----------------------------------------------------------
 plot(gg)
-```
 
-Violin plot with boxplot code 
-========================================================
-
-```{r}
+## ------------------------------------------------------------------------
 
 gg <-ggviolin(surgery ,
-            x = "gender", 
-            y = "birthwt", # variable to be plotted
+            x = "Gender", 
+            y = "Weight", # variable to be plotted
           combine = TRUE, title="Violin-plot with boxplot",
-          color = "gender", palette = "jco",
+          color = "Gender", palette = "jco",
           ylab = "Expression", 
           add = "boxplot")+   
   theme(plot.title = element_text(hjust = 0.5))
 
-```
 
-Violin plot with boxplot 
-========================================================
-```{r echo=FALSE}
+## ----echo=FALSE----------------------------------------------------------
 plot(gg)
-```
 
+## ------------------------------------------------------------------------
+gg<- ggdotplot(surgery ,
+            x = "Gender", 
+            y = "Weight", # variable to be plotted
+            combine = TRUE, 
+            color = "Gender", 
+            palette = "jco",
+            fill = "white",
+            binwidth = 0.1,
+            ylab = "Expression", 
+            add = "median_iqr",
+            add.params = list(size = 0.9)
+          )
 
-Histogram code 
-========================================================
+## ----echo=FALSE----------------------------------------------------------
+plot(gg)
 
-```{r}
+## ------------------------------------------------------------------------
 gg<- gghistogram(surgery, 
             x= "Weight" ,   # variable to be plotted
             y= "..count..", # or "..density.."
@@ -137,20 +86,11 @@ gg<- gghistogram(surgery,
             add_density = T
             ) +   theme(plot.title = element_text(hjust = 0.5))
 
-```
 
-Histogram plot 
-========================================================
-```{r echo=FALSE}
+## ----echo=FALSE----------------------------------------------------------
 plot(gg)
-```
 
-
-
-Density plot code
-========================================================
-
-```{r}
+## ------------------------------------------------------------------------
 gg <-  ggdensity(surgery, 
           x = "Weight",
           fill = "Gender",
@@ -160,31 +100,11 @@ gg <-  ggdensity(surgery,
           linetype = "dotdash",color = "Gender",
           facet.by = "Gender",add = "mean" ) +   
   theme(plot.title = element_text(hjust = 0.5))
-```
 
-Density plot 
-========================================================
-
-```{r}
+## ------------------------------------------------------------------------
 plot(gg)
-```
 
-
-2.Correlation plots 
-========================================================
-
-Under this section we consider 
-
- * Scatterplots
- * Jitter Plots
- * Counts Chart
- * Bubble Plot
- * Marginal Histograms / Boxplot
-
-
-Scatterplots Bubble plot code
-========================================================
-```{r echo=TRUE}
+## ----echo=TRUE-----------------------------------------------------------
 
 gapminder = gapminder
 # Scatterplot
@@ -204,22 +124,11 @@ ggplot( aes(GDP_per_capita_percentage, Life_Expectancy,size = Population,
   ylab("Life Expectancy")+ # Change the label of Y-axis
   scale_x_log10() # log-Scale X values 
 
-```
 
-Scatterplots Bubble plot 
-========================================================
-
-```{r, echo=FALSE}
+## ---- echo=FALSE---------------------------------------------------------
 plot(gg)
-```
 
-
- 
- 
-Scatterplot code
-========================================================
-
-```{r}
+## ------------------------------------------------------------------------
 # Scatterplot
 
 
@@ -236,60 +145,32 @@ g = ggscatter(surgery , x = "Weight",y = "Height",
               )
 
 
-```
 
-Scatterplot with ellipsis plot
-======================================================== 
-
-```{r echo=FALSE}
+## ----echo=FALSE----------------------------------------------------------
 plot(g)
 # ggMarginal(g, type = "density", fill="transparent")
-```
 
-
-Scatterplot with marginal histogram plot
-======================================================== 
-
-```{r}
+## ------------------------------------------------------------------------
 ggMarginal(g, type = "histogram", fill="transparent")
-```
 
-Error plots
-======================================================== 
-
-```{r echo= FALSE}
+## ----echo= FALSE---------------------------------------------------------
 # ToothGrowth
 data("ToothGrowth")
 head(ToothGrowth)
-```
 
-```{r}
+## ------------------------------------------------------------------------
 # Change error plot type and add mean points
 ggerrorplot(ToothGrowth, x = "dose", y = "len", 
             desc_stat = "mean_sd",
             error.plot = "errorbar",            # Change error plot type
             add = "mean"                        # Add mean points
             )
-```
 
-Ranking plots
-========================================================
-
- * (Ordered) Bar Chart
- * Lollipop Chart
- * Dot Plot
- * Slope Chart
- * Dumbbell Plot
-
-```{r echo= FALSE}
+## ----echo= FALSE---------------------------------------------------------
 data1 <- read_excel("Data/Data for graphs.xlsx", 
                     sheet = "graph1")
-```
 
-Bar Chart code
-========================================================
-
-```{r}
+## ------------------------------------------------------------------------
 gg= ggbarplot(data = data1, #import  Data
           x="App",          # The X-value
           y="Proportion",   # The percentages
@@ -305,26 +186,16 @@ gg= ggbarplot(data = data1, #import  Data
   geom_text(aes(label=paste(Proportion*100,"%",sep = "")),size=3,vjust=-1)
 
 
-```
 
-Bar Chart
-========================================================
-
-```{r echo=FALSE}
+## ----echo=FALSE----------------------------------------------------------
 plot(gg)
-```
 
-
-Ordered bar chart code
-========================================================
-
-```{r echo=FALSE}
+## ----echo=FALSE----------------------------------------------------------
 data2 <- read_excel("Data/Data for graphs.xlsx", 
                     sheet = "Sheet2")
 
-```
 
-```{r}
+## ------------------------------------------------------------------------
 gg= data2%>%
   arrange(desc(-freq))%>%
   ggbarplot( #import  Data
@@ -342,18 +213,11 @@ gg= data2%>%
           plot.title = element_text(hjust = 0.5))
 
 
-```
 
-Ordered bar chart 
-========================================================
-```{r}
+## ------------------------------------------------------------------------
 plot(gg)
-```
 
-Lollipop Chart code
-========================================================
-
-```{r}
+## ------------------------------------------------------------------------
 
 
 # Plot
@@ -369,10 +233,7 @@ gg= ggplot(data2,aes(x=reorder(website,freq),
   geom_text(aes(label= freq),size=2,hjust=-0.35) + rotate()
 
 
-```
 
-
-
-```{r}
+## ------------------------------------------------------------------------
 plot(gg)
-```
+

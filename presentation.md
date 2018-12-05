@@ -7,61 +7,92 @@ class: small-code
 
 
 
-
 Introduction
 ========================================================
 
 The ggpubr is a R package that helps you create basic beautiful ggplot2-based graphs.
 
 What is ggpubr:
-- Wrapper around the ggplot2 package for beginners in R programming.
-- Helps researchers, with basic R programming skills, to create easily publication-ready plots.
-- Gives the possibility to add p-values and significance levels to plots.
-- Makes it easy to arrange and annotate multiple plots on the same page.
-- Makes it easy to change grahical parameters such as colors and labels.
-- Is still a ggplot2 object... 
-  - Therefore, it can be further manipulated as a ggplot object
+
+ * Wrapper around the ggplot2 package for beginners in R programming.
+ * Helps researchers, with basic R programming skills, to create easily publication-ready plots.
+ * Gives the possibility to add p-values and significance levels to plots.
+ * Makes it easy to arrange and annotate multiple plots on the same page.
+ * Makes it easy to change grahical parameters such as colors and labels.
+ * Is still a ggplot2 object... 
+   * Therefore, it can be further manipulated as a ggplot object
 
 Generate some data for descriptive statistics
 ========================================================
 
 
 ```r
-Sigma= matrix(c(20,15,15,20), 2)
-Sigma2= matrix(c(15,10,10,15), 2)
-
-
-df =  data.frame(mvrnorm(1000,c(180,80) , Sigma = Sigma) , Gender = rep("Male"))
-df2 =  data.frame(mvrnorm(400,c(170,65) , Sigma = Sigma2) , Gender = rep("Female"))
-
-df = rbind(df, df2)
-names(df) = c("Height","Weight","Gender")
+library(haven)
+bladder   <- read_sav("Data/bladder.sav")
+surgery   <- read_sav("Data/surgery.sav")
+skullrats <- read_sav("Data/SkullRats.sav")
 ```
 
-1. Distribution plots
-========================================================
 
-Under this section we consider 
-
-- Box Plots
-- Violin + Boxplot
-- Dot + Box Plot
-- Histograms
-- Density Plots
-
-
-
-Βοx-plot code 
+Know thyself...and your data
 ========================================================
 
 
 ```r
-gg<- ggboxplot(df ,
-            x = "Gender", 
-            y = "Weight", # variable to be plotted
+names(bladder)
+```
+
+```
+ [1] "Id"        "Birthday"  "gender"    "Date_diag" "Stage"    
+ [6] "Grade"     "solitaire" "Nareas"    "Biopsy"    "Therapy"  
+[11] "Recidive"  "Died"      "date_rec"  "date_ovl" 
+```
+
+```r
+names(surgery)
+```
+
+```
+[1] "id"       "gender"   "place"    "birthwt"  "gestatio" "lengthst"
+[7] "infect"   "prematur" "surgery" 
+```
+
+Know thyself...and your data (part2)
+========================================================
+
+```r
+names(skullrats)
+```
+
+```
+[1] "obs"      "treat"    "rat"      "age"      "response" "t"       
+```
+
+
+Distribution plots
+========================================================
+
+Under this section we consider 
+
+ * Boxplots
+ * Violin + Boxplot
+ * Dot + Box Plot
+ * Histograms
+ * Density Plots
+
+
+
+Boxplot code 
+========================================================
+
+
+```r
+gg<- ggboxplot(surgery , # the data-set
+            x = "gender", 
+            y = "birthwt", # variable to be plotted
             color = "black", # paint the borders by Gender
-            fill = "Gender", # fill the boxes with color
-            title = "Box-plot of weight colored by gender", # a better title
+            fill = "gender", # fill the boxes with color
+title = "Box-plot of birth-weight colored by gender", # a better title
             palette = "jco", # use the jco palette
             add = "mean", # or median
             bxp.errorbar = T  # adds the error bars of boxplots 
@@ -69,90 +100,45 @@ gg<- ggboxplot(df ,
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-Βοx-plot 
-========================================================
-![plot of chunk unnamed-chunk-4](Figs/unnamed-chunk-4-1.png)
-
-violin-plot with boxplot code 
-========================================================
-
-
-```r
-gg <-ggviolin(df ,
-            x = "Gender", 
-            y = "Weight", # variable to be plotted
-          combine = TRUE, title="Violin-plot with boxplot",
-          color = "Gender", palette = "jco",
-          ylab = "Expression", 
-          add = "boxplot")+   
-  theme(plot.title = element_text(hjust = 0.5))
-```
-
-Βοxplot with violin 
+Boxplot
 ========================================================
 ![plot of chunk unnamed-chunk-6](Figs/unnamed-chunk-6-1.png)
-
-Dotplot code 
-========================================================
-
-
-```r
-gg<- ggdotplot(df ,
-            x = "Gender", 
-            y = "Weight", # variable to be plotted
-            combine = TRUE, 
-            color = "Gender", 
-            palette = "jco",
-            fill = "white",
-            binwidth = 0.1,
-            ylab = "Expression", 
-            add = "median_iqr",
-            add.params = list(size = 0.9)
-          )
-```
-
-Dotplot
-========================================================
-![plot of chunk unnamed-chunk-8](Figs/unnamed-chunk-8-1.png)
 
 Histogram code 
 ========================================================
 
 
 ```r
-gg<- gghistogram(df, 
-            x= "Weight" ,   # variable to be plotted
+gg<- gghistogram(surgery, 
+            x= "birthwt" ,   # variable to be plotted
             y= "..count..", # or "..density.."
-            color = "Gender", # paint the borders by Gender
-            fill = "Gender", # fill the bars with color
-            bins = 25 , # control how many bars will the histogram have
-            title = "Histogram of weight colored by gender", # a better title
+            color = "gender", # paint the borders by Gender
+            fill = "gender", # fill the bars with color
+            bins = 10 , # how many bars will the histogram have
+title = "Histogram of birth-weight (by gender)", # a better title
             palette = "jco", # use the jco palette
             add = "mean", 
-            add_density = T,
+            add_density = T
             ) +   theme(plot.title = element_text(hjust = 0.5))
 ```
 
 Histogram plot 
 ========================================================
-![plot of chunk unnamed-chunk-10](Figs/unnamed-chunk-10-1.png)
-
-
+![plot of chunk unnamed-chunk-8](Figs/unnamed-chunk-8-1.png)
 
 Density plot code
 ========================================================
 
 
 ```r
-gg <-  ggdensity(df, 
-          x = "Weight",
-          fill = "Gender",
+gg <-  ggdensity(surgery, 
+          x = "birthwt",
+          fill = "gender",
           palette = "jco", 
           adjust = 3,
           title = "Density plot of weight", 
-          linetype = "dotdash",color = "Gender",
-          facet.by = "Gender",add = "mean" ) +   
-  theme(plot.title = element_text(hjust = 0.5))
+          linetype = "dotdash",color = "gender",add = "median" ) +   
+  theme(plot.title = element_text(hjust = 0.5))+ facet_wrap(.~ gender, nrow = 2)
 ```
 
 Density plot 
@@ -163,7 +149,31 @@ Density plot
 plot(gg)
 ```
 
+![plot of chunk unnamed-chunk-10](Figs/unnamed-chunk-10-1.png)
+
+
+
+
+Violin plot with boxplot code 
+========================================================
+
+
+```r
+gg <-ggviolin(surgery ,
+            x = "gender", y = "birthwt", # variable to be plotted
+          combine = TRUE, title="Violin-plot with boxplot",
+          color = "gender", palette = "jco",
+          ylab = "Expression", 
+          add = "boxplot")+   
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+Violin plot with boxplot 
+========================================================
 ![plot of chunk unnamed-chunk-12](Figs/unnamed-chunk-12-1.png)
+
+
+
 
 
 2.Correlation plots 
@@ -171,11 +181,11 @@ plot(gg)
 
 Under this section we consider 
 
-- Scatterplots
-- Jitter Plots
-- Counts Chart
-- Bubble Plot
-- Marginal Histograms / Boxplot
+ * Scatterplots
+ * Jitter Plots
+ * Counts Chart
+ * Bubble Plot
+ * Marginal Histograms / Boxplot
 
 
 Scatterplots-Bubble plot code
@@ -195,13 +205,11 @@ ggplot( aes(GDP_per_capita_percentage, Life_Expectancy,size = Population,
   # a new title
   theme(plot.title = element_text(hjust = 0.5))+
     geom_point() + # insert the points of the parameters used in the general ggplot
-  theme(plot.title = element_text(hjust = 0.5)) + 
   xlab("GDP per capita") + # Change the label of X-axis
-  ylab("Life Expectancy")+ # Change the label of Y-axis
-  scale_x_log10() # log-Scale X values 
+  ylab("Life Expectancy") # Change the label of Y-axis
 ```
 
-Scatterplots-Bubble plot 
+Scatterplots Bubble plot 
 ========================================================
 
 ![plot of chunk unnamed-chunk-14](Figs/unnamed-chunk-14-1.png)
@@ -209,7 +217,7 @@ Scatterplots-Bubble plot
 
  
  
-Scatterplot code
+Scatter-plot code
 ========================================================
 
 
@@ -217,26 +225,25 @@ Scatterplot code
 # Scatterplot
 
 
-g = ggscatter(df , x = "Weight",y = "Height", 
-              color = "Gender", palette = "jco",
-              title = "Association of weight and height in males and females",
-              xlab = "Weight measured in kilograms",
-              ylab = "Height measured in centimeters", 
+g = ggscatter(surgery , # import data
+              x = "birthwt",y = "gestatio", # x-y values
+              color = "gender", palette = "jco",
+              title = "Association of gestational age and birth weight (by gender)",
+              xlab = "Birth weight (in kilograms)",
+              ylab = "Gestational age", 
               shape = 1,
               ggtheme = theme_bw(),
-              ellipse = T, 
-              ellipse.alpha = 0.4,
               fill = "white"
               )
 ```
 
-Scatterplot with ellipsis plot
+Scatter-plot
 ======================================================== 
 
 ![plot of chunk unnamed-chunk-16](Figs/unnamed-chunk-16-1.png)
 
 
-Scatterplot with marginal histogram plot
+Scatterplot with marginal histograms
 ======================================================== 
 
 
@@ -275,11 +282,11 @@ ggerrorplot(ToothGrowth, x = "dose", y = "len",
 Ranking plots
 ========================================================
 
-- (Ordered) Bar Chart
-- Lollipop Chart
-- Dot Plot
-- Slope Chart
-- Dumbbell Plot
+ * (Ordered) Bar Chart
+ * Lollipop Chart
+ * Dot Plot
+ * Slope Chart
+ * Dumbbell Plot
 
 
 
@@ -309,7 +316,7 @@ Bar Chart
 ![plot of chunk unnamed-chunk-22](Figs/unnamed-chunk-22-1.png)
 
 
-Ordered bar-chart code
+Ordered bar chart code
 ========================================================
 
 
@@ -333,7 +340,7 @@ gg= data2%>%
           plot.title = element_text(hjust = 0.5))
 ```
 
-Ordered bar-chart 
+Ordered bar chart 
 ========================================================
 
 ```r
@@ -369,7 +376,7 @@ plot(gg)
 
 ![plot of chunk unnamed-chunk-27](Figs/unnamed-chunk-27-1.png)
 
-Line-point plots
+Line-point plots code
 ========================================================
 
 
@@ -385,6 +392,8 @@ gg <- ggplot(data=data4,aes(x=year,y=proportion,color=how))+
   scale_color_discrete(name="",breaks=c("Met Online","Met through Friends","Bar/Restaurant"))+facet_wrap(~orientation)
 ```
 
+Line-point plots
+========================================================
 
 
 ```r
