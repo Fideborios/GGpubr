@@ -27,10 +27,12 @@ ggboxplot(surgery, x = "gender", y = "birthwt")
 ggboxplot(surgery, "gender", "birthwt",select = "Male")
 
 # Change the default order of items
-ggboxplot(surgery, "gender", "birthwt",order = c("Female", "Male"))
+ggboxplot(surgery, "gender", "birthwt",
+          order = c("Female", "Male"))
 
 # put some x-axis and y-axis labels other than the name of the variables
-ggboxplot(surgery, x = "gender", y = "birthwt",xlab = "Gender", 
+ggboxplot(surgery, x = "gender", y = "birthwt",
+          xlab = "Gender", 
           ylab = "Birth Weight (in grams)")
 
 # put a title over the graph
@@ -45,16 +47,20 @@ ggboxplot(surgery, x = "gender", y = "birthwt",xlab = "Gender", ylab = "Birth We
 
 # Change orientation: horizontal
 ggboxplot(surgery, "gender", y = "birthwt",xlab = "Gender", ylab = "Birth Weight (in grams)",
-          title = "Boxplot of weight at birth ", width = 0.5, orientation = "horizontal")
+          title = "Boxplot of weight at birth ", width = 0.5,
+          orientation = "horizontal")
 
 # Notched box plot
-ggboxplot(surgery, x = "gender", y = "birthwt",xlab = "Gender", ylab = "Birth Weight (in grams)",
-          title = "Boxplot of weight at birth ", width = 0.5,notch = TRUE)
+ggboxplot(surgery, x = "gender", y = "birthwt",
+          xlab = "Gender", ylab = "Birth Weight (in grams)",
+          title = "Boxplot of weight at birth ", 
+          width = 0.5,notch = TRUE)
 
 # Add dots
 # ++++++++++++++++++++++++++
 ggboxplot(surgery, x = "gender", y = "birthwt",xlab = "Gender", ylab = "Birth Weight (in grams)",
-          title = "Boxplot of weight at birth ", width = 0.5,add = "dotplot")
+          title = "Boxplot of weight at birth ", 
+          width = 0.5,add = "dotplot")
 
 # Add jitter points and change the shape by Gender
 # An artificial noise is the points is introduced to make the graph look better
@@ -92,7 +98,7 @@ ggboxplot(surgery, "gender", "birthwt",xlab = "Gender",
           title = "Boxplot of weight at birth ", 
           width = 0.5,add = "jitter", 
           shape = "gender",color = "gender", 
-          palette = "Dark2", 
+          palette = "jama", 
           shape = "gender")
 
 
@@ -192,17 +198,14 @@ ggboxplot(data = surgery,x =  "gender", y = "birthwt",
 
 ### It's ggplot2 object so you can fill it with more things
 
-ggboxplot(data = surgery,x =  "gender", y = "birthwt",
-          xlab = "Gender", ylab = "Birth Weight (in grams)",
-          width = 0.5,add = "jitter", 
+gghistogram(data = surgery,x =  "birthwt", y = "..count..",
+          xlab = "Birth weight", ylab = "Frequency",
           shape = "gender",fill = "gender",palette = "simpsons",
-          title = "A boxplot of weight at the time of birth",
-          legend = "bottom",legend.title="Gender",font.legend = c(10, "bold", "darkgrey"),  
+          title = "A Histogram of weight ",
+          legend = "bottom",font.legend = c(10, "bold", "darkgrey"),  
           font.main = c(18, "italic", "black"),
           subtitle = "Male and female infants compared ", font.subtitle = c(12, "bold.italic", "darkgreen"),
           ggtheme = theme_minimal()
 ) +   
   theme(plot.title = element_text(hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5)) + 
-  stat_compare_means(method = "t.test")#  Add a p-value
-
+        plot.subtitle = element_text(hjust = 0.5)) 
