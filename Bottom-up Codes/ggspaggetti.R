@@ -14,10 +14,13 @@ summary(skullrats)
 
 
 skullrats$treat =  factor(skullrats$treat, labels = c("High dose","Control","Low dose"))
-skullrats$t
+skullrats$t  =  as.numeric(skullrats$t) 
+
 # Basic plot
 ggplot(skullrats,aes(y= response, x = t)) + geom_point()
-
+ggline(skullrats, y= "response", x = "t", group= "rat", add = "point", xlab = "time") +
+  scale_y_continuous(limits=c(65,92.5),breaks=seq(65,92.5,5),expand=c(0,0))+
+  scale_x_continuous(limits=c(-0.25,2.25),breaks=seq(0,2,0.5))
 # Basic plot + lines 
 ggplot(skullrats,aes(y= response, x = t, group = rat)) + geom_point() + geom_line()
 

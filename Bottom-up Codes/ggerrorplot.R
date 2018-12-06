@@ -25,6 +25,18 @@ bar_error=skullrats%>%
          LCI=mean.response-qt(0.975,n.res-1)*sd.response,
          UCI=mean.response+qt(0.975,n.res-1)*sd.response)
 
+ggplot(data=bar_error,aes(x=age,y=mean.response,ymin=LCI,ymax=UCI,colour=treat))+
+  geom_point(size=1.5,position=position_dodge(width=3))+
+  geom_line(size=1,position=position_dodge(width=3))+
+  geom_errorbar(width=3,size=1,position=position_dodge(width=3))+
+  ylab("Mean Response in pixels")+  scale_y_continuous(limits=c(65,90),breaks=seq(65,90,5),expand=c(0,0))+
+  xlab("Age in days")+ scale_x_continuous(limits=c(40,121),breaks=seq(40,121,10),expand=c(0,0))+
+  ggtitle("Rat Skull Development")+
+  scale_colour_manual(name=" ",breaks=c("Control","Low dose", "High dose"),
+                      values=c("red1","green1","blue1")) + theme_minimal() + theme(plot.title =element_text(hjust= 0.5))
+
+
+
 View(bar_error)
 
 ggplot(data=bar_error,aes(x=age,y=mean.response,ymin=LCI,ymax=UCI))+
