@@ -20,7 +20,8 @@ Introduction
 
 - ggplot2 package has a steap learning curve, therefore
     * We will use ggpubr
-ggpubr is a R package that helps you create basic beautiful ggplot2-based graphs.
+    
+- ggpubr is a R package that helps you create basic beautiful ggplot2-based graphs.
  * Helps researchers, to create easily publication-ready plots.
  * Provides the possibility to add p-values and significance levels to plots.
  * Makes it easy to arrange and annotate multiple plots on the same page.

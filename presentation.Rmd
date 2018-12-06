@@ -2,6 +2,7 @@
 title: "How to make plots in R using ggpubr"
 author: "Michail Belias"
 date: "December 6, 2018"
+subtitle: michail.belias@radboudumc.nl
 output:
   slidy_presentation: default
   ioslides_presentation: default
@@ -37,14 +38,14 @@ Introduction
 
 - ggplot2 package has a steap learning curve, therefore
     * We will use ggpubr
-ggpubr is a R package that helps you create basic beautiful ggplot2-based graphs.
+    
+- ggpubr is a R package that helps you create basic beautiful ggplot2-based graphs.
  * Helps researchers, to create easily publication-ready plots.
  * Provides the possibility to add p-values and significance levels to plots.
  * Makes it easy to arrange and annotate multiple plots on the same page.
  * Makes it easy to change grahical parameters such as colors and labels.
  * Produces  a ggplot2 object... 
    * Therefore, it can be further manipulated as a ggplot object
-
 
 ggpubr package
 ========================================================
