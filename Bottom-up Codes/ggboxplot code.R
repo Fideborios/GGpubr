@@ -57,6 +57,8 @@ ggboxplot(surgery, x = "gender", y = "birthwt",xlab = "Gender", ylab = "Birth We
           title = "Boxplot of weight at birth ", width = 0.5,add = "dotplot")
 
 # Add jitter points and change the shape by Gender
+# An artificial noise is the points is introduced to make the graph look better
+# otherwise the values would in straight line (for males and females)
 ggboxplot(surgery, x = "gender", y = "birthwt",xlab = "Gender", ylab = "Birth Weight (in grams)",
           title = "Boxplot of weight at birth ", width = 0.5,add = "jitter", 
           shape = "gender")
@@ -202,5 +204,5 @@ ggboxplot(data = surgery,x =  "gender", y = "birthwt",
 ) +   
   theme(plot.title = element_text(hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5)) + 
-  stat_compare_means(method = "wilcox.test")#  Add a p-value
+  stat_compare_means(method = "t.test")#  Add a p-value
 

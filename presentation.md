@@ -8,23 +8,12 @@ width: 1980
 height: 1200
 autosize: true
 
-
 Install and load the packages we will use
 ========================================================
 
 - You can do it manually through the "install" dialog in the "packages" tab 
 
 
-```r
-if(!require(haven)) install.packages("haven")
-if(!require(dplyr)) install.packages("dplyr")
-if(!require(ggpubr))library(ggpubr)
-if(!require(ggplot2)) install.packages("ggplot2")
-if(!require(readxl))library(readxl)
-if(!require(gapminder)) install.packages("gapminder")
-if(!require(ggExtra)) install.packages("ggExtra")
-if(!require(ggsci))library(ggsci)
-```
 
 
 
@@ -98,6 +87,14 @@ names(skullrats)
 ```
 [1] "obs"      "treat"    "rat"      "age"      "response" "t"       
 ```
+
+
+What I want you to learn
+========================================================
+
+- Google is our friend
+- ggpubr functions have great help file (use it)
+- theme function 
 
 
 Distribution plots
@@ -264,15 +261,15 @@ Scatterplots-Bubble plot code
 ```r
 gapminder = gapminder
 # Scatterplot
-names(gapminder) =  c("Country","Continent","Year","Life_Expectancy","Population","GDP_per_capita_percentage")
+names(gapminder) =  c("Country","Continent","Year","Life_Expectancy",
+                      "Population","GDP_per_capita_percentage")
 
 gg = gapminder%>%
     filter(Year %in% "2007")%>%
 ggscatter( x = "GDP_per_capita_percentage", y = "Life_Expectancy",
-           size = "Population", 
-            color = "Continent", 
-           title = "Life expectancy association with GDP per capita percentage (in 2007)",
-           xlab = ,ylab = "Life Expectancy",
+           size = "Population", color = "Continent", 
+title = "Life expectancy association with GDP per capita percentage (in 2007)",
+           xlab = "GDP per capita" ,ylab = "Life Expectancy",
            legend.position = "right") + 
   theme(plot.title = element_text(hjust = 0.5))
 ```

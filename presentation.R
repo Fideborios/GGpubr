@@ -1,4 +1,4 @@
-## ------------------------------------------------------------------------
+## ----echo=FALSE----------------------------------------------------------
 if(!require(haven)) install.packages("haven")
 if(!require(dplyr)) install.packages("dplyr")
 if(!require(ggpubr))library(ggpubr)
@@ -66,8 +66,6 @@ ggboxplot(data, x, y, # load the data and choose the x and y variables
   repel = FALSE, label.rectangle = FALSE, ggtheme = theme_pubr())
 
 ## ------------------------------------------------------------------------
-
-  
 gg <- ggboxplot(data = surgery,x =  "gender", y = "birthwt",
           xlab = "Gender", ylab = "Birth Weight (in grams)",
           width = 0.5,add = "jitter", 
@@ -125,15 +123,15 @@ plot(gg)
 ## ----echo=TRUE-----------------------------------------------------------
 gapminder = gapminder
 # Scatterplot
-names(gapminder) =  c("Country","Continent","Year","Life_Expectancy","Population","GDP_per_capita_percentage")
+names(gapminder) =  c("Country","Continent","Year","Life_Expectancy",
+                      "Population","GDP_per_capita_percentage")
 
 gg = gapminder%>%
     filter(Year %in% "2007")%>%
 ggscatter( x = "GDP_per_capita_percentage", y = "Life_Expectancy",
-           size = "Population", 
-            color = "Continent", 
-           title = "Life expectancy association with GDP per capita percentage (in 2007)",
-           xlab = ,ylab = "Life Expectancy",
+           size = "Population", color = "Continent", 
+title = "Life expectancy association with GDP per capita percentage (in 2007)",
+           xlab = "GDP per capita" ,ylab = "Life Expectancy",
            legend.position = "right") + 
   theme(plot.title = element_text(hjust = 0.5))
 

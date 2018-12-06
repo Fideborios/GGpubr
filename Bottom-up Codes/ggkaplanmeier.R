@@ -34,11 +34,13 @@ names(bladder)
 
 
 
-ggplot(bladder, aes(time = date_diff, status = Died)) + geom_km()
+ggplot(bladder, aes(time = date_diff, status = Died)) + geom_km ()  +     scale_y_continuous(limits=c(0,1))  +  
+  scale_y_continuous(limits=c(0,1))
 
 ## Basic usage
 library(ggkm)
-ggplot(bladder, aes(time = date_diff, status = Died)) + geom_km()
+ggplot(bladder, aes(time = date_diff, status = Died)) + geom_km()+     scale_y_continuous(limits=c(0,1))  +  
+  scale_y_continuous(limits=c(0,1))
 ggplot(bladder, aes(time = date_diff, status = Died)) + geom_km() + facet_wrap(~ Therapy)
 ggplot(bladder, aes(time = date_diff, status = Died, color = Therapy)) + geom_km()
 
@@ -54,8 +56,8 @@ ggplot(bladder, aes(time = date_diff, status = Died, color = Therapy)) + geom_km
 
 ggplot(bladder, aes(time = date_diff, status = Died, color = Therapy,fill = Therapy)) + geom_km() + geom_kmband()
 ggplot(bladder, aes(time = date_diff, status = Died, color = Therapy,fill = Therapy)) + geom_km() + geom_kmband(conf.int = .99)
-ggplot(bladder, aes(time = date_diff, status = Died, color = Therapy,fill = Therapy)) + geom_km() + geom_kmband(conf.int = .99) + 
-  facet_wrap(~ Therapy, labeller = "label_both")
+ggplot(bladder, aes(time = date_diff, status = Died, color = Therapy,fill = Therapy)) + geom_km() + 
+  geom_kmband(conf.int = .99) + facet_wrap(~ Therapy, labeller = "label_both")
 
 
 ## Tranformations

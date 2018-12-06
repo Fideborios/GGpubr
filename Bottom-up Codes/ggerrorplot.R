@@ -1,4 +1,20 @@
+# Load data
+library(ggpubr) 
+library(haven)
+library(dplyr)
 
+# if there is not package installed 
+# install.packages(ggpubr)
+skullrats <- read_sav("Data/SkullRats.sav")
+
+
+
+head(skullrats)
+summary(skullrats)
+
+
+skullrats$treat =  factor(skullrats$treat, labels = c("High dose","Control","Low dose"))
+skullrats$t
 
 bar_error=skullrats%>%
   group_by(age,treat)%>%
